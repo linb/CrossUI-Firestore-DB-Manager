@@ -33,7 +33,7 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
                   GOOGLE_OAUTH_CLIENT_ID : null
             };
             */
-            return {"GOOGLE_OAUTH_CLIENT_ID":"","signInMethods":"EmailPassword;Github;Google","config":{"apiKey":"AIzaSyC2Bqk0ddNtUa4UOhgJS9fpUq_3bRG1rck","authDomain":"crossui.firebaseapp.com","databaseURL":"//crossui.firebaseio.com","projectId":"crossui","storageBucket":"crossui.appspot.com","messagingSenderId":"20598955141","appId":"1:20598955141:web:f86e98e32c1ffcdaf61dec"}};
+            return {"GOOGLE_OAUTH_CLIENT_ID":"","signInMethods":"EmailPassword;Google","config":{"apiKey":"AIzaSyC2Bqk0ddNtUa4UOhgJS9fpUq_3bRG1rck","authDomain":"crossui.firebaseapp.com","databaseURL":"//crossui.firebaseio.com","projectId":"crossui","storageBucket":"crossui.appspot.com","messagingSenderId":"20598955141","appId":"1:20598955141:web:f86e98e32c1ffcdaf61dec"}};
         },
         ensureFirebaseAuth:function(){
             var api = this;
