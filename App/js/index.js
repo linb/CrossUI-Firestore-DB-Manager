@@ -1,47 +1,1110 @@
-// The default code is a module class (inherited from xui.Module)
-// Ensure that all the value of "key/value pair" does not refer to external variables
 xui.Class('App', 'xui.Module',{
     Instance:{
-        // Dependency classes
-        Dependencies:[],
-        // Required modules
-        Required:[],
-
-        // To initialize properties
-        properties : {},
-
-        // To initialize instance(e.g. properties)
-        initialize : function(){
-        },
-
-        // To initialize internal components (mostly UI controls)
-        // *** If you're not a skilled, dont modify this function manually ***
         iniComponents : function(){
             // [[Code created by CrossUI RAD Studio
             var host=this, children=[], append=function(child){children.push(child.get(0));};
-
+            
+            append(
+                xui.create("xui.UI.Layout")
+                .setHost(host,"xui_ui_layout3")
+                .setItems([
+                    {
+                        "id":"before",
+                        "size":260,
+                        "min":10,
+                        "locked":false,
+                        "folded":false,
+                        "hidden":false,
+                        "cmd":true,
+                        "pos":"before"
+                    },
+                    {
+                        "id":"main",
+                        "size":80,
+                        "min":10
+                    }
+                ])
+                .setLeft("0em")
+                .setTop("0em")
+                .setType("horizontal")
+            );
+            
+            host.xui_ui_layout3.append(
+                xui.create("xui.UI.Panel")
+                .setHost(host,"xui_panel_left")
+                .setLeft("9.166666666666666em")
+                .setTop("7.5em")
+                .setCaption("Collections in: ...")
+                .setNoFrame(true)
+                .setPopBtn(true)
+                .beforePop({
+                    "return":"{false}",
+                    "actions":[
+                        {
+                            "desc":"if",
+                            "type":"none",
+                            "target":"none",
+                            "args":[ ],
+                            "method":"none",
+                            "conditions":[
+                                {
+                                    "left":"{global.firebaseProject}",
+                                    "symbol":"empty",
+                                    "right":""
+                                }
+                            ],
+                            "return":false,
+                            "event":2
+                        },
+                        {
+                            "desc":"goto firebase console",
+                            "type":"other",
+                            "target":"url",
+                            "args":[
+                                "https://console.firebase.google.com/u/0/project/{global.firebaseProject}/database"
+                            ],
+                            "method":"open----_blank"
+                        }
+                    ]
+                }),
+                "before"
+            );
+            
+            host.xui_panel_left.append(
+                xui.create("xui.UI.ToolBar")
+                .setHost(host,"xui_tb_files")
+                .setItems([
+                    {
+                        "id":"grp2",
+                        "sub":[
+                            {
+                                "id":"new",
+                                "caption":"New Collection",
+                                "imageClass":"xui-uicmd-add",
+                                "tips":"Add a new json file to root"
+                            },
+                            {
+                                "id":"refresh",
+                                "caption":"Refresh",
+                                "imageClass":"xui-uicmd-refresh",
+                                "tips":"Refresh the tree"
+                            }
+                        ],
+                        "caption":"grp2"
+                    }
+                ])
+                .setTop("7.5em")
+                .onClick([
+                    {
+                        "desc":"new",
+                        "type":"page",
+                        "target":"App.SchemaSelector",
+                        "args":[ ],
+                        "method":"show",
+                        "conditions":[
+                            {
+                                "left":"{args[1].id}",
+                                "symbol":"=",
+                                "right":"new"
+                            }
+                        ],
+                        "event":3
+                    },
+                    {
+                        "desc":"refresh",
+                        "type":"module",
+                        "target":"module_firebasedb",
+                        "args":[
+                            "{page.module_firebasedb.listCollections}"
+                        ],
+                        "method":"$Functions.listCollections",
+                        "conditions":[
+                            {
+                                "left":"{args[1].id}",
+                                "symbol":"=",
+                                "right":"refresh"
+                            }
+                        ],
+                        "redirection":"other:callback:call"
+                    }
+                ])
+            );
+            
+            host.xui_panel_left.append(
+                xui.create("xui.UI.List")
+                .setHost(host,"xui_list_tables")
+                .setDirtyMark(false)
+                .setDock("fill")
+                .setLeft("15em")
+                .setTop("20.833333333333332em")
+                .setSelMode("none")
+                .setBorderType("inset")
+                .setTagCmds([
+                    {
+                        "id":"delete",
+                        "itemClass":"xuicon xui-uicmd-close",
+                        "tips":"Delete this one"
+                    }
+                ])
+                .onCmd([
+                    {
+                        "desc":"if delete",
+                        "type":"other",
+                        "target":"msg",
+                        "args":[
+                            "Delete?",
+                            "Are you sure to delete this collection?"
+                        ],
+                        "method":"confirm",
+                        "okFlag":"_confirm_yes",
+                        "koFlag":"_confirm_no",
+                        "conditions":[
+                            {
+                                "left":"{args[2]}",
+                                "symbol":"=",
+                                "right":"delete"
+                            }
+                        ],
+                        "onOK":2,
+                        "onKO":3
+                    },
+                    {
+                        "desc":"delete",
+                        "type":"other",
+                        "target":"callback",
+                        "args":[
+                            "{page.functions.deleteCollection}",
+                            undefined,
+                            undefined,
+                            "{args[1].id}",
+                            "{args[1].sha}"
+                        ],
+                        "method":"call",
+                        "conditions":[
+                            {
+                                "left":"{args[2]}",
+                                "symbol":"=",
+                                "right":"delete"
+                            },
+                            {
+                                "left":"{temp._confirm_yes}",
+                                "symbol":"defined",
+                                "right":""
+                            }
+                        ]
+                    }
+                ])
+                .onItemSelected({
+                    "newbies":{
+                        "clfjj5fi":"Module.TableView"
+                    },
+                    "actions":[
+                        {
+                            "desc":"exists?",
+                            "type":"control",
+                            "target":"xui_tabs_json",
+                            "args":[
+                                "{args[1].id}",
+                                "{args[1].id}"
+                            ],
+                            "method":"setValue",
+                            "conditions":[
+                                {
+                                    "left":"{page.xui_tabs_json.getItems()}",
+                                    "symbol":"objarrhaskey",
+                                    "right":"{args[1].id}"
+                                }
+                            ],
+                            "return":false
+                        },
+                        {
+                            "desc":"pick item",
+                            "type":"other",
+                            "target":"var",
+                            "args":[
+                                "item",
+                                "{args[1]}"
+                            ],
+                            "method":"temp",
+                            "event":2
+                        },
+                        {
+                            "desc":"adjust item",
+                            "type":"other",
+                            "target":"var",
+                            "args":[
+                                "item.closeBtn",
+                                "{true}"
+                            ],
+                            "method":"temp",
+                            "event":2
+                        },
+                        {
+                            "desc":"add tab",
+                            "type":"control",
+                            "target":"xui_tabs_json",
+                            "args":[
+                                "{temp.item}",
+                                true,
+                                true
+                            ],
+                            "method":"insertItems",
+                            "event":2
+                        },
+                        {
+                            "desc":"active tab",
+                            "type":"control",
+                            "target":"xui_tabs_json",
+                            "args":[
+                                "{args[1].id}"
+                            ],
+                            "method":"fireItemClickEvent"
+                        },
+                        {
+                            "desc":"crete inputmodule",
+                            "type":"module",
+                            "target":"{temp.newbies.clfjj5fi}",
+                            "args":[
+                                {
+                                    "path":"{args[1].id}",
+                                    "page":1
+                                }
+                            ],
+                            "method":"setProperties"
+                        },
+                        {
+                            "desc":"show mdl",
+                            "type":"module",
+                            "target":"{temp.newbies.clfjj5fi}",
+                            "args":[
+                                undefined,
+                                "{page.xui_tabs_json}",
+                                "{args[1].id}"
+                            ],
+                            "method":"show"
+                        },
+                        {
+                            "desc":"list docs",
+                            "type":"module",
+                            "target":"module_firebasedb",
+                            "args":[
+                                "{page.module_firebasedb.listDocs}",
+                                undefined,
+                                undefined,
+                                "listDocs",
+                                "{args[1].id}",
+                                "{true}",
+                                "{global.page_size}",
+                                undefined,
+                                undefined,
+                                undefined,
+                                undefined,
+                                "",
+                                "{temp.newbies.clfjj5fi.functions.setResult}"
+                            ],
+                            "method":"$Functions.listDocs",
+                            "redirection":"other:callback:call"
+                        }
+                    ]
+                })
+            );
+            
+            host.xui_ui_layout3.append(
+                xui.create("xui.UI.Tabs")
+                .setHost(host,"xui_tabs_json")
+                .setLeft("0em")
+                .setTop("0em")
+                .setValue("a"),
+                "main"
+            );
+            
+            append(
+                xui.create("xui.UI.Block")
+                .setHost(host,"xui_ui_block15")
+                .setDock("top")
+                .setLeft("15.833333333333334em")
+                .setTop("0em")
+                .setHeight("5em")
+                .setBorderType("none")
+                .setBackground("#FFFFFF")
+                .setOverflow("hidden")
+                .setCustomStyle({
+                    "PANEL":{
+                        "$gradient":{
+                            "stops":[
+                                {
+                                    "pos":"0%",
+                                    "clr":"#CEF8FF"
+                                },
+                                {
+                                    "pos":"50%",
+                                    "clr":"#7FE0F8"
+                                },
+                                {
+                                    "pos":"100%",
+                                    "clr":"#9BF1FF"
+                                }
+                            ],
+                            "type":"linear",
+                            "orient":"L"
+                        }
+                    }
+                })
+            );
+            
+            host.xui_ui_block15.append(
+                xui.create("xui.UI.Div")
+                .setHost(host,"xui_ui_div26")
+                .setHoverPop("xui_lst_usermenu")
+                .setTop("0.16666666666666666em")
+                .setWidth("auto")
+                .setHeight("3.3333333333333335em")
+                .setRight("1em")
+            );
+            
+            host.xui_ui_div26.append(
+                xui.create("xui.UI.Image")
+                .setHost(host,"xui_ui_avatar")
+                .setTop("0.8333333333333334em")
+                .setWidth("2.5em")
+                .setHeight("2.5em")
+                .setPosition("relative")
+                .setSrc("{xui.ini.img_pic}")
+                .setCustomStyle({
+                    "KEY":{
+                        "border-radius":"16px 16px 16px 16px"
+                    }
+                })
+            );
+            
+            host.xui_ui_div26.append(
+                xui.create("xui.UI.Label")
+                .setHost(host,"xui_ui_labelUser")
+                .setTop("1em")
+                .setTabindex(2)
+                .setPosition("relative")
+                .setCaption("User")
+                .setFontSize("1.5em")
+                .setCustomStyle({
+                    "KEY":{
+                        "margin":"0px 0px 0px 8px"
+                    }
+                })
+            );
+            
+            host.xui_ui_div26.append(
+                xui.create("xui.UI.Icon")
+                .setHost(host,"xui_ui_icon3")
+                .setTop("1.0833333333333333em")
+                .setTabindex(3)
+                .setPosition("relative")
+                .setImageClass("xui-uicmd-arrowdrop")
+            );
+            
+            host.xui_ui_block15.append(
+                xui.create("xui.UI.Label")
+                .setHost(host,"xui_ui_label1")
+                .setLeft("5.833333333333333em")
+                .setTop("1.9166666666666667em")
+                .setHeight("2.6666666666666665em")
+                .setCaption("Firestore DB Manager")
+                .setHAlign("left")
+                .setFontColor("#B22222")
+                .setFontSize("2em")
+                .setFontFamily("comic sans ms,cursive")
+                .setCustomStyle({
+                    "KEY":{ }
+                })
+            );
+            
+            host.xui_ui_block15.append(
+                xui.create("xui.UI.Image")
+                .setHost(host,"xui_ui_image18")
+                .setLeft("0em")
+                .setTop("-0.25em")
+                .setWidth("5.833333333333333em")
+                .setHeight("5.833333333333333em")
+                .setSrc("https://avatars2.githubusercontent.com/u/2810941?v=3&s=96")
+            );
+            
+            append(
+                xui.create("xui.UI.List")
+                .setHost(host,"xui_lst_usermenu")
+                .setDirtyMark(false)
+                .setItems([
+                    {
+                        "id":"logout",
+                        "caption":"Log out",
+                        "imageClass":"xui-icon-back"
+                    }
+                ])
+                .setLeft("50em")
+                .setTop("3.3333333333333335em")
+                .setWidth("15.833333333333334em")
+                .setHeight("3.3333333333333335em")
+                .setDisplay("none")
+                .setSelMode("none")
+                .setLabelSize("8.333333333333334em")
+                .setLabelPos("none")
+                .onItemSelected([
+                    {
+                        "desc":"clr global var",
+                        "type":"other",
+                        "target":"var",
+                        "args":[
+                            "repoName",
+                            "{null}"
+                        ],
+                        "method":"global",
+                        "event":2
+                    },
+                    {
+                        "desc":"logout",
+                        "type":"module",
+                        "target":"module_firebasedb",
+                        "args":[
+                            "{page.module_firebasedb.firebaseLogout}"
+                        ],
+                        "method":"$Functions.firebaseLogout",
+                        "redirection":"other:callback:call"
+                    },
+                    {
+                        "desc":"clr tabs",
+                        "type":"control",
+                        "target":"xui_tabs_json",
+                        "args":[ ],
+                        "method":"clearItems"
+                    },
+                    {
+                        "desc":"clr tree",
+                        "type":"control",
+                        "target":"xui_list_tables",
+                        "args":[ ],
+                        "method":"clearItems"
+                    }
+                ])
+                .setCustomStyle({
+                    "ITEM":{
+                        "font-family":"arial black,avant garde",
+                        "font-size":"1.5em"
+                    }
+                })
+            );
+            
+            append(
+                xui.create("xui.UI.Block")
+                .setHost(host,"xui_ui_block16")
+                .setDock("bottom")
+                .setLeft("15.833333333333334em")
+                .setTop("49.166666666666664em")
+                .setHeight("2.1666666666666665em")
+                .setHtml("<div style=\"padding-top:4px;\">\n    <i>\n        \n    Created by&nbsp;\n        <a target=\" _blank\" href=\"https://crossui.com/RADGithub\">\n            CrossUI Web App Builder\n        </a>\n        ,\n    without coding!\n    </i>\n</div>\n")
+                .setBorderType("ridge")
+                .setCustomStyle({
+                    "PANEL":{
+                        "text-align":"right"
+                    }
+                })
+            );
+            
+            append(
+                xui.create("xui.UI.Block")
+                .setHost(host,"xui_sel_repo")
+                .setLeft("0.8333333333333334em")
+                .setTop("3.6666666666666665em")
+                .setWidth("21em")
+                .setHeight("19.166666666666668em")
+                .setVisibility("hidden")
+                .setShadow(true)
+                .setBorderType("flat")
+                .setBackground("#FFFFFF")
+                .setOverflow("hidden")
+            );
+            
+            host.xui_sel_repo.append(
+                xui.create("xui.UI.ComboInput")
+                .setHost(host,"xui_inp_search")
+                .setDirtyMark(false)
+                .setShowDirtyMark(false)
+                .setLeft("0.75em")
+                .setTop("0.6666666666666666em")
+                .setWidth("19.25em")
+                .setDynCheck(true)
+                .setLabelSize("5em")
+                .setLabelCaption("Search")
+                .setType("none")
+                .setImageClass("xui-icon-filter")
+                .setCommandBtn("delete")
+                .onChange([
+                    {
+                        "desc":"search",
+                        "type":"other",
+                        "target":"callback",
+                        "args":[
+                            "{page.functions.doRepoSearch}",
+                            undefined,
+                            undefined,
+                            "{1}"
+                        ],
+                        "method":"call",
+                        "timeout":500,
+                        "resetid":"searchName"
+                    }
+                ])
+            );
+            
+            host.xui_sel_repo.append(
+                xui.create("xui.UI.PageBar")
+                .setHost(host,"xui_ui_pagebar5")
+                .setLeft("0.75em")
+                .setTop("15.833333333333334em")
+                .setWidth("19.25em")
+                .setHeight("2.1666666666666665em")
+                .setCaption("")
+                .setPageCount(10)
+                .onPageSet([
+                    {
+                        "desc":"check",
+                        "type":"none",
+                        "target":"none",
+                        "args":[ ],
+                        "method":"none",
+                        "conditions":[
+                            {
+                                "left":"{args[4]}",
+                                "symbol":"=",
+                                "right":"inited"
+                            }
+                        ],
+                        "return":false
+                    },
+                    {
+                        "desc":"busy ui",
+                        "type":"other",
+                        "target":"msg",
+                        "args":[ ],
+                        "method":"busy",
+                        "okFlag":"_prompt_ok",
+                        "koFlag":"_prompt_cancel"
+                    },
+                    {
+                        "desc":"query list",
+                        "type":"other",
+                        "target":"callback",
+                        "args":[
+                            "{page.functions.doRepoSearch}",
+                            undefined,
+                            undefined,
+                            "{args[1]}"
+                        ],
+                        "method":"call"
+                    }
+                ])
+            );
+            
+            append(
+                xui.create("Module.FirebaseHandler", "xui.Module")
+                .setHost(host,"module_firebasedb")
+                .setEvents({
+                    "onError":[
+                        {
+                            "desc":"log",
+                            "type":"other",
+                            "target":"msg",
+                            "args":[
+                                "{args}"
+                            ],
+                            "method":"log"
+                        },
+                        {
+                            "desc":"if delObj",
+                            "type":"other",
+                            "target":"msg",
+                            "args":[
+                                "Github refused the push!\n\nDo not delete the Object as a Github dir too often. \n\nTry to delete object later, Please!",
+                                "Try later please"
+                            ],
+                            "method":"message",
+                            "conditions":[
+                                {
+                                    "left":"{args[1]}",
+                                    "symbol":"=",
+                                    "right":"delObj"
+                                },
+                                {
+                                    "left":"{args[2]}",
+                                    "symbol":"include",
+                                    "right":"Update is not a fast forward"
+                                }
+                            ],
+                            "return":false
+                        },
+                        {
+                            "desc":"show error",
+                            "type":"other",
+                            "target":"msg",
+                            "args":[
+                                "Error at {args[1]} - {args[3]}",
+                                "{args[2]}"
+                            ],
+                            "method":"alert",
+                            "onOK":2
+                        }
+                    ],
+                    "onFirebaseLogin":[
+                        {
+                            "desc":"set avatar",
+                            "type":"control",
+                            "target":"xui_ui_avatar",
+                            "args":[
+                                { },
+                                {
+                                    "src":"{args[1]}"
+                                }
+                            ],
+                            "method":"setProperties"
+                        },
+                        {
+                            "desc":"set name",
+                            "type":"control",
+                            "target":"xui_ui_labelUser",
+                            "args":[
+                                { },
+                                {
+                                    "caption":"{args[0]}"
+                                }
+                            ],
+                            "method":"setProperties"
+                        },
+                        {
+                            "desc":"set name to global",
+                            "type":"other",
+                            "target":"var",
+                            "args":[
+                                "firebaseUser",
+                                "{args[0]}"
+                            ],
+                            "method":"global"
+                        },
+                        {
+                            "desc":"set prj to global",
+                            "type":"other",
+                            "target":"var",
+                            "args":[
+                                "firebaseProject",
+                                "{args[2]}"
+                            ],
+                            "method":"global"
+                        },
+                        {
+                            "desc":"set prj to panel",
+                            "type":"control",
+                            "target":"xui_panel_left",
+                            "args":[
+                                "{page.xui_panel_left.setCaption()}",
+                                undefined,
+                                undefined,
+                                "Collections in: {args[2]}"
+                            ],
+                            "method":"setCaption",
+                            "redirection":"other:callback:call"
+                        },
+                        {
+                            "desc":"list collections",
+                            "type":"module",
+                            "target":"module_firebasedb",
+                            "args":[
+                                "{page.module_firebasedb.listCollections}"
+                            ],
+                            "method":"$Functions.listCollections",
+                            "redirection":"other:callback:call"
+                        }
+                    ],
+                    "onCollectionDelete":[
+                        {
+                            "desc":"remove from list",
+                            "type":"control",
+                            "target":"xui_list_tables",
+                            "args":[
+                                "{args[1]}"
+                            ],
+                            "method":"removeItems"
+                        },
+                        {
+                            "desc":"remove from tabs",
+                            "type":"control",
+                            "target":"xui_tabs_json",
+                            "args":[
+                                "{args[1]}"
+                            ],
+                            "method":"removeItems"
+                        }
+                    ],
+                    "afterDBAction":[
+                        {
+                            "desc":"free",
+                            "type":"other",
+                            "target":"msg",
+                            "args":[ ],
+                            "method":"free"
+                        }
+                    ],
+                    "beforeDBAction":[
+                        {
+                            "desc":"busy",
+                            "type":"other",
+                            "target":"msg",
+                            "args":[ ],
+                            "method":"busy"
+                        }
+                    ],
+                    "onDocCreate":[
+                        {
+                            "desc":"ac1",
+                            "type":"page",
+                            "target":"App",
+                            "args":[
+                                "{page.functions.showAlert}"
+                            ],
+                            "method":"functions.showAlert",
+                            "redirection":"other:callback:call"
+                        }
+                    ],
+                    "onDocDelete":[
+                        {
+                            "desc":"ac1",
+                            "type":"page",
+                            "target":"App",
+                            "args":[
+                                "{page.functions.showAlert}"
+                            ],
+                            "method":"functions.showAlert",
+                            "redirection":"other:callback:call"
+                        }
+                    ],
+                    "onDocpdate":[
+                        {
+                            "desc":"ac1",
+                            "type":"page",
+                            "target":"App",
+                            "args":[
+                                "{page.functions.showAlert}"
+                            ],
+                            "method":"functions.showAlert",
+                            "redirection":"other:callback:call"
+                        }
+                    ],
+                    "onCollectionsList":[
+                        {
+                            "desc":"set",
+                            "type":"control",
+                            "target":"xui_list_tables",
+                            "args":[
+                                "{page.xui_list_tables.setItems()}",
+                                undefined,
+                                undefined,
+                                "{args[1]}"
+                            ],
+                            "method":"setItems",
+                            "redirection":"other:callback:call"
+                        }
+                    ],
+                    "onCollectionCreate":[
+                        {
+                            "desc":"refreshlist",
+                            "type":"module",
+                            "target":"module_firebasedb",
+                            "args":[
+                                "{page.module_firebasedb.listCollections}"
+                            ],
+                            "method":"$Functions.listCollections",
+                            "redirection":"other:callback:call"
+                        }
+                    ]
+                })
+            );
+            
+            append(
+                xui.create("xui.UI.CSSBox")
+                .setHost(host,"xui_ui_cssbox1")
+                .setClassName("xui-css-can")
+                .setNormalStatus({
+                    "color":"#222222",
+                    "background-color":"transparent",
+                    "background-image":"none",
+                    "border-top":"none",
+                    "border-right":"none",
+                    "border-bottom":"none",
+                    "border-left":"none",
+                    "border-radius":"6px",
+                    "text-shadow":"0 -1px 0 #ffffff",
+                    "box-shadow":"none",
+                    "cursor":"pointer"
+                })
+                .setHoverStatus({
+                    "background-color":"#EEEEEE",
+                    "background-image":"none"
+                })
+                .setActiveStatus({
+                    "background-color":"#CCCCCC",
+                    "background-image":"none"
+                })
+            );
+            
             return children;
             // ]]Code created by CrossUI RAD Studio
         },
 
-        // Give a chance to determine which UI controls will be appended to parent container
         customAppend : function(parent, subId, left, top){
-            // "return false" will cause all the internal UI controls will be added to the parent panel
             return false;
-        }
-        /*,
-        // To determine how properties affects this module
-        propSetAction : function(prop){
         },
-        // To set all node's style in this modlue
-        customStyle:{}
-    },
-    //To customize the default properties and event handlers
-    Static:{
-        $DataModel:{
+        events:{
+            "onRender":[
+                {
+                    "desc":"action 1",
+                    "type":"module",
+                    "target":"module_firebasedb",
+                    "args":[
+                        "{page.module_firebasedb.ensureFirebaseAuth}"
+                    ],
+                    "method":"$Functions.ensureFirebaseAuth",
+                    "redirection":"other:callback:call"
+                }
+            ],
+            "onGlobalMessage":null,
+            "onMessage":[
+                {
+                    "desc":"create collection",
+                    "type":"module",
+                    "target":"module_firebasedb",
+                    "args":[
+                        "{page.module_firebasedb.createCollection}",
+                        undefined,
+                        undefined,
+                        "createCollection",
+                        "{args[2]}",
+                        "{args[3]}"
+                    ],
+                    "method":"$Functions.createCollection",
+                    "conditions":[
+                        {
+                            "left":"{args[1]}",
+                            "symbol":"=",
+                            "right":"createCollection"
+                        }
+                    ],
+                    "redirection":"other:callback:call"
+                },
+                {
+                    "desc":"refreshDocs",
+                    "type":"module",
+                    "target":"module_firebasedb",
+                    "args":[
+                        "{page.module_firebasedb.listDocs}",
+                        undefined,
+                        undefined,
+                        "listDocs",
+                        "{args[2]}",
+                        "{args[3]}",
+                        "{global.page_size}",
+                        "{args[4]}",
+                        "{args[5]}",
+                        "{args[6]}",
+                        "{args[7]}",
+                        "{args[8]}",
+                        "{args[9]}"
+                    ],
+                    "method":"$Functions.listDocs",
+                    "conditions":[
+                        {
+                            "left":"{args[1]}",
+                            "symbol":"=",
+                            "right":"refreshDocs"
+                        }
+                    ],
+                    "redirection":"other:callback:call"
+                },
+                {
+                    "desc":"add doc",
+                    "type":"module",
+                    "target":"module_firebasedb",
+                    "args":[
+                        "{page.module_firebasedb.createDoc}",
+                        undefined,
+                        undefined,
+                        "createDoc",
+                        "{args[2]}",
+                        "{args[3]}",
+                        "{args[4]}"
+                    ],
+                    "method":"$Functions.createDoc",
+                    "conditions":[
+                        {
+                            "left":"{args[1]}",
+                            "symbol":"=",
+                            "right":"addDoc"
+                        }
+                    ],
+                    "redirection":"other:callback:call"
+                },
+                {
+                    "desc":"del doc",
+                    "type":"module",
+                    "target":"module_firebasedb",
+                    "args":[
+                        "{page.module_firebasedb.deleteDoc}",
+                        undefined,
+                        undefined,
+                        "deleteDoc",
+                        "{args[2]}",
+                        "{args[3]}",
+                        "{args[4]}"
+                    ],
+                    "method":"$Functions.deleteDoc",
+                    "conditions":[
+                        {
+                            "left":"{args[1]}",
+                            "symbol":"=",
+                            "right":"delDoc"
+                        }
+                    ],
+                    "redirection":"other:callback:call"
+                },
+                {
+                    "desc":"upd doc",
+                    "type":"module",
+                    "target":"module_firebasedb",
+                    "args":[
+                        "{page.module_firebasedb.updateDoc}",
+                        undefined,
+                        undefined,
+                        "updateDoc",
+                        "{args[2]}",
+                        "{args[3]}",
+                        "{args[4]}",
+                        ""
+                    ],
+                    "method":"$Functions.updateDoc",
+                    "conditions":[
+                        {
+                            "left":"{args[1]}",
+                            "symbol":"=",
+                            "right":"updateDoc"
+                        }
+                    ],
+                    "redirection":"other:callback:call"
+                },
+                {
+                    "desc":"log",
+                    "type":"other",
+                    "target":"msg",
+                    "args":[
+                        "{args}"
+                    ],
+                    "method":"log"
+                }
+            ]
         },
-        $EventHandlers:{
+        properties:{
+            "cur_repo":null,
+            "ur_path":null,
+            "per_page":null,
+            "cur_page":null,
+            "json_path":null
+        },
+        functions:{
+            "doRepoSearch":{
+                "desc":"do search",
+                "params":[
+                    {
+                        "id":"page",
+                        "type":"Number",
+                        "desc":""
+                    }
+                ],
+                "actions":[
+                    {
+                        "desc":"search",
+                        "type":"module",
+                        "target":"module_firebasedb",
+                        "args":[
+                            "{page.module_firebasedb.listRepos}",
+                            undefined,
+                            undefined,
+                            "forSelectRepo",
+                            "{args[0]}",
+                            "{page.xui_ui_pagebar5.getPageCount()}",
+                            "{page.xui_inp_search.getValue()}"
+                        ],
+                        "method":"$Functions.listRepos",
+                        "redirection":"other:callback:call"
+                    }
+                ]
+            },
+            "listCollections":{
+                "desc":"list all Collections",
+                "params":[ ],
+                "actions":[
+                    {
+                        "desc":"list",
+                        "type":"module",
+                        "target":"module_firebasedb",
+                        "args":[
+                            "{page.module_firebasedb.listCollections}"
+                        ],
+                        "method":"$Functions.listCollections",
+                        "redirection":"other:callback:call"
+                    }
+                ]
+            },
+            "deleteCollection":{
+                "desc":"delete file",
+                "params":[
+                    {
+                        "id":"collectionName",
+                        "type":"String",
+                        "desc":""
+                    }
+                ],
+                "actions":[
+                    {
+                        "desc":"check",
+                        "type":"none",
+                        "target":"none",
+                        "args":[ ],
+                        "method":"none",
+                        "conditions":[
+                            {
+                                "left":"{args[0]}",
+                                "symbol":"empty",
+                                "right":""
+                            }
+                        ],
+                        "return":false
+                    },
+                    {
+                        "desc":"delete",
+                        "type":"module",
+                        "target":"module_firebasedb",
+                        "args":[
+                            "{page.module_firebasedb.deleteCollection}",
+                            undefined,
+                            undefined,
+                            "delCol",
+                            "{args[0]}"
+                        ],
+                        "method":"$Functions.deleteCollection",
+                        "redirection":"other:callback:call"
+                    },
+                    {
+                        "desc":"busyUI",
+                        "type":"other",
+                        "target":"msg",
+                        "args":[ ],
+                        "method":"busy"
+                    }
+                ]
+            }
         }
-    */
     }
 });
