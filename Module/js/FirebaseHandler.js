@@ -2,7 +2,7 @@
 xui.Class('Module.FirebaseHandler', 'xui.Module',{
     Instance:{
         SCHEMAS_COLLECTION:"__xui_db_schemas",
- 
+
         // Dependency libs
         Required:[
             "[firebase]https://www.gstatic.com/firebasejs/6.6.1/firebase.js"
@@ -16,24 +16,19 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
             window.xui_FirebaseHandler = this;
         },     
         getFirebaseConfig:function(){
-            /*
             return {
-                config : {
-                  apiKey: "AIzaSyC2Bqk0ddNtUa4UOhgJS9fpUq_3bRG1rck",
-                  authDomain: "crossui.firebaseapp.com",
-                  databaseURL: "https://crossui.firebaseio.com",
-                  projectId: "crossui",
-                  storageBucket: "crossui.appspot.com",
-                  messagingSenderId: "20598955141",
-                  appId: "1:20598955141:web:f86e98e32c1ffcdaf61dec"
-                },
-                signInMethods : "Google;Github;EmailPassword",
-                // Google OAuth Client ID, needed to support One-tap sign-up.
-                // Set to null if One-tap sign-up is not supported.
-                  GOOGLE_OAUTH_CLIENT_ID : null
+                "GOOGLE_OAUTH_CLIENT_ID":"",
+                "signInMethods":"EmailPassword;Google",
+                "config":{
+                    "apiKey":"AIzaSyC2Bqk0ddNtUa4UOhgJS9fpUq_3bRG1rck",
+                    "authDomain":"crossui.firebaseapp.com",
+                    "databaseURL":"//crossui.firebaseio.com",
+                    "projectId":"crossui",
+                    "storageBucket":"crossui.appspot.com",
+                    "messagingSenderId":"20598955141",
+                    "appId":"1:20598955141:web:f86e98e32c1ffcdaf61dec"
+                }
             };
-            */
-            return {"GOOGLE_OAUTH_CLIENT_ID":"","signInMethods":"EmailPassword;Google","config":{"apiKey":"AIzaSyC2Bqk0ddNtUa4UOhgJS9fpUq_3bRG1rck","authDomain":"crossui.firebaseapp.com","databaseURL":"//crossui.firebaseio.com","projectId":"crossui","storageBucket":"crossui.appspot.com","messagingSenderId":"20598955141","appId":"1:20598955141:web:f86e98e32c1ffcdaf61dec"}};
         },
         ensureFirebaseAuth:function(){
             var api = this;
@@ -42,18 +37,18 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
                 var body=xui('body'),
                     top = body.first().topZindex();
                 var loginLayer =  (new xui.UI.Div())
-                    .setDock('cover')
-                    .setShowEffects("Slide In TB")
-                    .setHideEffects("Slide In TB")
-                    .setPanelBgClr("#fff")
-                    .setIframeAutoLoad("{/}Module/js/Module.FirebaseHandler/pages/FirebaseLoginLayer.html");
+                .setDock('cover')
+                .setShowEffects("Slide In TB")
+                .setHideEffects("Slide In TB")
+                .setPanelBgClr("#fff")
+                .setIframeAutoLoad("{/}Module/js/Module.FirebaseHandler/pages/FirebaseLoginLayer.html");
                 // ensure effects
                 loginLayer.render(true);
                 loginLayer.setZIndex(top+1).setDisplay('');
                 loginLayer.show(body).setDock('cover',true);
                 return loginLayer;
             }
- 
+
             // init firebase
             firebase.initializeApp(api.getFirebaseConfig().config);
             firebase.auth().onAuthStateChanged(function(user) {
@@ -61,18 +56,18 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
                     api.loginLayer= showFirebaseLogInLayer();
                 }else{
                     if (user.photoURL) {
-                      var photoURL = user.photoURL;
-                      if ((photoURL.indexOf('googleusercontent.com') != -1) || (photoURL.indexOf('ggpht.com') != -1)) {
-                        photoURL = photoURL + '?sz=64';
-                      }
-                      user.photoURL = photoURL;
+                        var photoURL = user.photoURL;
+                        if ((photoURL.indexOf('googleusercontent.com') != -1) || (photoURL.indexOf('ggpht.com') != -1)) {
+                            photoURL = photoURL + '?sz=64';
+                        }
+                        user.photoURL = photoURL;
                     }
                     var crossuiUser = {
-                      uid: user.uid,
-                      name: user.displayName,
-                      email: user.email,
-                      avatar: user.photoURL,
-                      project: api.getFirebaseConfig().config.projectId
+                        uid: user.uid,
+                        name: user.displayName,
+                        email: user.email,
+                        avatar: user.photoURL,
+                        project: api.getFirebaseConfig().config.projectId
                     };
                     api._userProfile = crossuiUser;
                     api.setToken(crossuiUser.uid);
@@ -115,18 +110,18 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
             firebase.auth().signOut();
         },
         deleteAccount:function(){
-              firebase.auth().currentUser.delete().catch(function(error) {
+            firebase.auth().currentUser.delete().catch(function(error) {
                 if (error.code == 'auth/requires-recent-login') {
-                  // The user's credential is too old. She needs to sign in again.
-                  firebase.auth().signOut().then(function() {
-                    // The timeout allows the message to be displayed after the UI has
-                    // changed to the signed out state.
-                    setTimeout(function() {
-                      alert('Please sign in again to delete your account.');
-                    }, 1);
-                  });
+                    // The user's credential is too old. She needs to sign in again.
+                    firebase.auth().signOut().then(function() {
+                        // The timeout allows the message to be displayed after the UI has
+                        // changed to the signed out state.
+                        setTimeout(function() {
+                            alert('Please sign in again to delete your account.');
+                        }, 1);
+                    });
                 }
-              });
+            });
         },
 
         // APIs
@@ -169,7 +164,7 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
             }).catch( e => {
                 api.fireEvent("onError", ["collectionExist",requestId, xui.getErrMsg(e), e]);
                 api.fireEvent("afterDBAction", ["collectionExist",requestId]);
-              });
+            });
         },
         // firestore doesn't need to create colletion, but crossui need to create schema
         createCollection : function(requestId, collectionName, schema, onSuccess, onFail){
@@ -178,13 +173,13 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
                 return;
             }
             api.db.collection(api.SCHEMAS_COLLECTION).doc(collectionName).set(schema)
-            .then(function() {
+                .then(function() {
                 var args = [requestId, collectionName];
                 if(false !== xui.tryF(onSuccess, args))
                     api.fireEvent("onCollectionCreate", args);  
                 api.fireEvent("afterDBAction", ["createCollection",requestId]);
             })
-            .catch(function(e) {
+                .catch(function(e) {
                 if(false!==xui.tryF(onFail,[e] )){
                     api.fireEvent("onError", ["createCollection",requestId, xui.getErrMsg(e), e]);
                 }
@@ -197,13 +192,13 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
                 return;
             }
             api.db.collection(collectionName).get().then(function(snap) {
-                  snap.docs.map(doc => {
+                snap.docs.map(doc => {
                     doc.ref.delete();
-                  });
+                });
                 var args = [requestId, collectionName];
                 if(false !== xui.tryF(onSuccess, args))
                     api.fireEvent("onCollectionDelete", args);      
-                 api.fireEvent("afterDBAction", ["deleteCollection",requestId]);
+                api.fireEvent("afterDBAction", ["deleteCollection",requestId]);
             }).catch(function(e) {
                 if(false!==xui.tryF(onFail,[e] )){
                     api.fireEvent("onError", ["deleteCollection",requestId, xui.getErrMsg(e), e]);
@@ -223,13 +218,13 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
          * startAfter : doc > get the next page start after doc
          * endBefore : doc > get the prev page end before doc
          **/
-        
+
         listDocs : function(requestId, collectionName, withSchema, page_size, startAt, startAfter, endBefore, wheres, orders, onSuccess, onFail){
             var api = this;
             if(false===api.fireEvent("beforeDBAction", ["listDocs",requestId,arguments])){
                 return;
             }
-          
+
             var datas=[], schema={}, pageLocation;
             var ref = api.db.collection(collectionName);
             var whereOrders = [];
@@ -246,7 +241,7 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
                     }
                 } 
             }
-            
+
             var needReverse;
             if(startAt === -1){
                 pageLocation = "last";
@@ -256,7 +251,7 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
                 needReverse = !!endBefore;
             }
             if(xui.isNumb(startAt)) startAt = null;
-            
+
 
             var hasOrdered={};
             if(orders && orders.length){
@@ -276,7 +271,7 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
                     }
                 }
             }
-            
+
             // no wheres and no orders, add __xui_updated 
             if(!hasWhere && xui.isEmpty(hasOrdered)){
                 ref = ref.orderBy("__xui_updated", needReverse?'asc':'desc');
@@ -286,7 +281,7 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
             else if(startAt)ref = ref.startAt(startAt);
             else if(startAfter)ref = ref.startAfter(startAfter);
 
-            
+
             ref.limit(page_size).get().then(function(querySnapshot) {
                 var size=0;
                 querySnapshot.forEach(function(doc) {
@@ -294,7 +289,7 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
                     // for timestamp, ref and geo
                     xui.clone(data, function(v,k){
                         if(v){
-                             if(v instanceof firebase.firestore.Timestamp ){
+                            if(v instanceof firebase.firestore.Timestamp ){
                                 this[k] = {
                                     value:v.toDate(),
                                     _stp:v
@@ -318,7 +313,7 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
                     });
                     data.__row__id=doc.id;
                     data.__row__doc = doc;
-                    
+
                     datas.push(data);
                     size++;
                 });
@@ -349,7 +344,7 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
                 }
                 var suc = function(){
                     var args = [requestId, collectionName, datas, schema, page_size, pageLocation];
-                     if(false !== xui.tryF(onSuccess, args))
+                    if(false !== xui.tryF(onSuccess, args))
                         api.fireEvent("onDocsList", args);
                     api.fireEvent("afterDBAction", ["listDocs",requestId]);
                 };
@@ -368,14 +363,14 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
                     suc();
                 }
             })
-            .catch(function(e) {
+                .catch(function(e) {
                 if(false!==xui.tryF(onFail,[e] )){
                     api.fireEvent("onError", ["listDocs",requestId, xui.getErrMsg(e),e]);
                 }
                 api.fireEvent("afterDBAction", ["listDocs",requestId]);
             });
         },
- 
+
         docExist:function(requestId, collectionName, doc/*ref,data,id*/, onSuccess, onFail){
             var api=this;
             if(false===api.fireEvent("beforeDBAction", ["docExist",requestId,arguments])){
@@ -486,7 +481,7 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
                     api.fireEvent("onDocCreate", args);  
                 api.fireEvent("afterDBAction", ["createDoc",requestId]);
             })
-            .catch(function(e) {
+                .catch(function(e) {
                 if(false!==xui.tryF(onFail,[e] )){
                     api.fireEvent("onError", ["createDoc",requestId, xui.getErrMsg(e), e]);
                 }
@@ -524,15 +519,15 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
                 }
                 return;
             }
-            
+
             delete data.__row__id;
             delete data.__row__doc;
             data.__xui_updated = firebase.firestore.FieldValue.serverTimestamp();
             //can't modify this
             delete data.__xui_created;
-            
+
             ref.set(data, { merge: true })
-            .then(function() {
+                .then(function() {
                 data.__row__id = ref.id;
                 data.__row__doc = ref;
                 var args = [requestId, collectionName, data, ref.id, ref];
@@ -540,7 +535,7 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
                     api.fireEvent("onDocUpdate", args);  
                 api.fireEvent("afterDBAction", ["updateDoc",requestId]);
             })
-            .catch(function(e) {
+                .catch(function(e) {
                 if(false!==xui.tryF(onFail,[e] )){
                     api.fireEvent("onError", ["updateDoc",requestId, xui.getErrMsg(e), e]);
                 }
@@ -575,7 +570,7 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
                 var args = [requestId, collectionName, docId];
                 if(false !== xui.tryF(onSuccess, args))
                     api.fireEvent("onDocDelete", args);      
-                 api.fireEvent("afterDBAction", ["deleteDoc",requestId]);
+                api.fireEvent("afterDBAction", ["deleteDoc",requestId]);
             }).catch(function(e) {
                 if(false!==xui.tryF(onFail,[e] )){
                     api.fireEvent("onError", ["deleteDoc",requestId, xui.getErrMsg(e), e]);
@@ -594,7 +589,7 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
                     api.fireEvent("onCallFunction", args);   
                 api.fireEvent("afterDBAction", ["callFunction",requestId]);
             })
-            .catch(function(e) {
+                .catch(function(e) {
                 if(false!==xui.tryF(onFail,[e] )){
                     api.fireEvent("onError", ["callFunction",requestId, xui.getErrMsg(e), e]);
                 }
@@ -616,68 +611,68 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
             // Get firestore instance
             getFirestore:function(){ },
             setLastActionConf:function(lastActionConf/*Object, {fun:Function, scope:Object, params:Array}*/){},
-            
-             // 4 for table/object
+
+            // 4 for table/object
             collectionExist:function(requestId /*String, the given request id*/, 
-                                collectionName /*String, collection name*/, 
-                                onSuccess /*Function, function(requestId, collectionName){}*/, 
-                                onFail/*Function, function(errorMessage){}*/){},
+                                      collectionName /*String, collection name*/, 
+                                      onSuccess /*Function, function(requestId, collectionName){}*/, 
+                                      onFail/*Function, function(errorMessage){}*/){},
             listCollections: function(requestId /*String, requestid*/, 
-                                  filter /*Function, function(obj:{}, key){}*/, 
-                                  onSuccess /*Function, function(requestId, collections:[collectionName]){} */, 
-                                  onFail/*Function*/){},
+                                       filter /*Function, function(obj:{}, key){}*/, 
+                                       onSuccess /*Function, function(requestId, collections:[collectionName]){} */, 
+                                       onFail/*Function*/){},
             createCollection:function(requestId /*String, the given request id*/, 
-                                 collectionName /*String, collection name*/, 
-                                 schema /*Object, {prop:[],...}*/, 
-                                 onSuccess /*Function, function(requestId, collectionName){} */, 
-                                 onFail/*Function, function(errorMessage){}*/){},
+                                       collectionName /*String, collection name*/, 
+                                       schema /*Object, {prop:[],...}*/, 
+                                       onSuccess /*Function, function(requestId, collectionName){} */, 
+                                       onFail/*Function, function(errorMessage){}*/){},
             deleteCollection:function(requestId /*String, the given request id*/, 
-                                 collectionName /*String, collection name*/, 
-                                 onSuccess /*Function, function(requestId, collectionName){}*/, 
-                                 onFail/*Function, function(errorMessage){}*/){},
+                                       collectionName /*String, collection name*/, 
+                                       onSuccess /*Function, function(requestId, collectionName){}*/, 
+                                       onFail/*Function, function(errorMessage){}*/){},
             // 6 for record / doc
             listDocs : function(requestId /*String, the given request id*/, 
-                                  collectionName /*String, collection name*/, 
-                                  withSchema /*Boolean, get schema or not*/,
-                                  page_size /*Number, per page count*/,
-                                  startAt /*Object, the page ref*/,
-                                  startAfter /*Object, the page ref*/,
-                                  endBefore /*Object, the page ref*/,
-                                  wheres /*Object, key/value pairs {left:String,symbol:String,right:String}*/, 
-                                  orders/*Object, key/value pairs {by:String, asc:boolean}*/, 
-                                  onSuccess /*Function, function(requestId, collectionName, datas:[{}], schema:{prop:[],...},page_size, pageLocation:String){}*/, 
-                                  onFail/*Function, function(errorMessage){}*/){},
+                                 collectionName /*String, collection name*/, 
+                                 withSchema /*Boolean, get schema or not*/,
+                                 page_size /*Number, per page count*/,
+                                 startAt /*Object, the page ref*/,
+                                 startAfter /*Object, the page ref*/,
+                                 endBefore /*Object, the page ref*/,
+                                 wheres /*Object, key/value pairs {left:String,symbol:String,right:String}*/, 
+                                 orders/*Object, key/value pairs {by:String, asc:boolean}*/, 
+                                 onSuccess /*Function, function(requestId, collectionName, datas:[{}], schema:{prop:[],...},page_size, pageLocation:String){}*/, 
+                                 onFail/*Function, function(errorMessage){}*/){},
             docExist:function(requestId /*String, the given request id*/, 
+                               collectionName /*String, collection name*/, 
+                               docId/*String/Object, ref,data,id*/, 
+                               onSuccess /*Function, function(requestId, collectionName, docId){}*/, 
+                               onFail/*Function, function(errorMessage){}*/){},
+            readDoc:function(requestId /*String, the given request id*/, 
+                              collectionName /*String, collection name*/, 
+                              docId/*String/Object, ref or id*/, 
+                              onSuccess /*Function, function(requestId , collectionName, data, docId, doc){} */, 
+                              onFail/*Function, function(errorMessage){}*/){},
+            createDoc:function(requestId /*String, the given request id*/, 
                                 collectionName /*String, collection name*/, 
-                                docId/*String/Object, ref,data,id*/, 
+                                data /*Object, doc data*/,
+                                onSuccess /*Function, function(requestId, collectionName, data, docId, doc){} */, 
+                                onFail/*Function, function(errorMessage){}*/){},
+            updateDoc:function(requestId /*String, the given request id*/, 
+                                collectionName /*String, collection name*/, 
+                                data /*Object, data data*/,
+                                docId/*String/Object, doc,ref,id*/, 
+                                onSuccess /*Function, function(requestId, collectionName, data, docId, doc){}*/, 
+                                onFail/*Function, function(errorMessage){}*/){},
+            deleteDoc:function(requestId /*String, the given request id*/, 
+                                collectionName /*String, collection name*/, 
+                                docId/*String/Object, doc,ref,data,id*/, 
                                 onSuccess /*Function, function(requestId, collectionName, docId){}*/, 
                                 onFail/*Function, function(errorMessage){}*/){},
-            readDoc:function(requestId /*String, the given request id*/, 
-                               collectionName /*String, collection name*/, 
-                               docId/*String/Object, ref or id*/, 
-                               onSuccess /*Function, function(requestId , collectionName, data, docId, doc){} */, 
-                               onFail/*Function, function(errorMessage){}*/){},
-            createDoc:function(requestId /*String, the given request id*/, 
-                                 collectionName /*String, collection name*/, 
-                                 data /*Object, doc data*/,
-                                 onSuccess /*Function, function(requestId, collectionName, data, docId, doc){} */, 
-                                 onFail/*Function, function(errorMessage){}*/){},
-            updateDoc:function(requestId /*String, the given request id*/, 
-                                 collectionName /*String, collection name*/, 
-                                 data /*Object, data data*/,
-                                 docId/*String/Object, doc,ref,id*/, 
-                                 onSuccess /*Function, function(requestId, collectionName, data, docId, doc){}*/, 
-                                 onFail/*Function, function(errorMessage){}*/){},
-            deleteDoc:function(requestId /*String, the given request id*/, 
-                                 collectionName /*String, collection name*/, 
-                                 docId/*String/Object, doc,ref,data,id*/, 
-                                 onSuccess /*Function, function(requestId, collectionName, docId){}*/, 
-                                 onFail/*Function, function(errorMessage){}*/){},
             callFunction:function(requestId /*String, the given request id*/, 
-                                funName /*String, function name*/, 
-                                argsObj /*Object, key/value pair */, 
-                                onSuccess /*Function, function(requestId, funName, argsObj,result){}*/, 
-                                onFail/*Function, function(errorMessage){}*/){}
+                                   funName /*String, function name*/, 
+                                   argsObj /*Object, key/value pair */, 
+                                   onSuccess /*Function, function(requestId, funName, argsObj,result){}*/, 
+                                   onFail/*Function, function(errorMessage){}*/){}
         },
         // export prop
         $DataModel:{
@@ -688,64 +683,64 @@ xui.Class('Module.FirebaseHandler', 'xui.Module',{
             beforeDBAction : function(funName /*String, function name*/,
                                        requestId /*String, the given request id*/,
                                        args /*Array, arguments*/
-                                       ){},
+                                      ){},
             afterDBAction : function(funName /*String, function name*/,
                                       requestId /*String, the given request id*/
-                                       ){},
+                                     ){},
             onError : function(funName /*String, function name*/,
-                              requestId /*String, the given request id*/, 
-                              errMsg /*String, error message*/,
-                              error /*Object, errorobject*/){},
+                                requestId /*String, the given request id*/, 
+                                errMsg /*String, error message*/,
+                                error /*Object, errorobject*/){},
             onFirebaseLogin : function(username /*String, user name*/, 
-                              avatar /*String, user avatar url*/, 
-                              project/*String, project name*/,
-                              user /*Object, user object*/,
-                              uid /*String, user uid*/
-                             ){},
+                                        avatar /*String, user avatar url*/, 
+                                        project/*String, project name*/,
+                                        user /*Object, user object*/,
+                                        uid /*String, user uid*/
+                                       ){},
             onFirebaseLogout : function(username /*String, user name*/, uid /*String, user uid*/){},
- 
-            
+
+
             onCollectionsList: function(requestId /*String, requestid*/, 
-                  collections /*Array, [collectionName], result list*/
-                 ){},
+                                         collections /*Array, [collectionName], result list*/
+                                        ){},
 
             onCollectionCreate : function(requestId /*String, the given request id*/, 
-                                             collectionName /*String, collection name*/
-                                            ){},
+                                           collectionName /*String, collection name*/
+                                          ){},
             onCollectionDelete : function(requestId /*String, the given request id*/, 
-                                             collectionName /*String, collection name*/
-                                            ){},
+                                           collectionName /*String, collection name*/
+                                          ){},
 
             onDocsList : function(requestId /*String, the given request id*/, 
-                                          collectionName/*String, collection name*/, 
-                                          datas /*Array, result list [{doc data}]*/, 
-                                          schema /*Object, schema object {prop[],...}*/, 
-                                          page_size /*Number, per page count*/,
-                                          pageLocation /*String, the page location*/                                
-                                         ){},
+                                   collectionName/*String, collection name*/, 
+                                   datas /*Array, result list [{doc data}]*/, 
+                                   schema /*Object, schema object {prop[],...}*/, 
+                                   page_size /*Number, per page count*/,
+                                   pageLocation /*String, the page location*/                                
+                                  ){},
             onDocRead : function(requestId /*String, the given request id*/, 
-                                         collectionName/*String, collection name*/, 
-                                         data /*Object, doc data*/,
-                                         docId/*String, doc id*/
-                                        ){},
+                                  collectionName/*String, collection name*/, 
+                                  data /*Object, doc data*/,
+                                  docId/*String, doc id*/
+                                 ){},
             onDocCreate : function(requestId /*String, the given request id*/, 
-                                          collectionName/*String, collection name*/, 
-                                          data /*Object, doc data*/,
-                                          docId/*String, doc id*/
-                                          ){},
+                                    collectionName/*String, collection name*/, 
+                                    data /*Object, doc data*/,
+                                    docId/*String, doc id*/
+                                   ){},
             onDocUpdate : function(requestId /*String, the given request id*/, 
-                                          collectionName/*String, collection name*/, 
-                                          data /*Object, doc data*/,
-                                          docId/*String, doc id*/
-                                          ){},
+                                    collectionName/*String, collection name*/, 
+                                    data /*Object, doc data*/,
+                                    docId/*String, doc id*/
+                                   ){},
             onDocDelete : function(requestId /*String, the given request id*/, 
-                                          collectionName/*String, collection name*/, 
-                                          docId/*String, doc id*/
-                                          ){},
+                                    collectionName/*String, collection name*/, 
+                                    docId/*String, doc id*/
+                                   ){},
             onCallFunction:function(requestId /*String, the given request id*/, 
-                                funName /*String, function name*/, 
-                                argsObj /*Object, key/value pair */, 
-                               result /*Object,  result*/){}
+                                     funName /*String, function name*/, 
+                                     argsObj /*Object, key/value pair */, 
+                                     result /*Object,  result*/){}
         }
     }
 });
