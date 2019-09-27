@@ -19,7 +19,98 @@ xui.Class('App.SchemaUtil', 'xui.Module',{
         iniComponents : function(){
             // [[Code created by CrossUI RAD Studio
             var host=this, children=[], append=function(child){children.push(child.get(0));};
-
+            
+            append(
+                xui.create("xui.UI.TreeGrid")
+                .setHost(host,"xui_ui_treegrid32")
+                .setDirtyMark(false)
+                .setDock("none")
+                .setLeft("15.833333333333334em")
+                .setTop("6.666666666666667em")
+                .setWidth("38.333333333333336em")
+                .setRowNumbered(true)
+                .setHeader([
+                    {
+                        "id":"fname",
+                        "caption":"First Name",
+                        "required":true,
+                        "type":"input",
+                        "width":"8em",
+                        "_cells":{ },
+                        "_serialId":"-h_g",
+                        "_colWidth":"8em",
+                        "_cellWidth":"8em",
+                        "_hcellheight":"1.8333333333333333em",
+                        "_region":2
+                    },
+                    {
+                        "id":"lname",
+                        "caption":"Last Name",
+                        "required":true,
+                        "type":"input",
+                        "width":"8em",
+                        "_cells":{ },
+                        "_serialId":"-h_h",
+                        "_colWidth":"8em",
+                        "_cellWidth":"8em",
+                        "_hcellheight":"1.8333333333333333em",
+                        "_region":2
+                    },
+                    {
+                        "id":"age",
+                        "caption":"age",
+                        "required":true,
+                        "type":"number",
+                        "width":"8em",
+                        "precision":0,
+                        "increment":10,
+                        "min":0,
+                        "max":200,
+                        "_cells":{ },
+                        "_serialId":"-h_i",
+                        "_colWidth":"8em",
+                        "_cellWidth":"8em",
+                        "_hcellheight":"1.8333333333333333em",
+                        "_region":2
+                    },
+                    {
+                        "id":"title",
+                        "type":"input",
+                        "width":"12em",
+                        "maxlength":156,
+                        "_cells":{ },
+                        "_serialId":"-h_j",
+                        "_colWidth":"12em",
+                        "_cellWidth":"12em",
+                        "_hcellheight":"1.8333333333333333em",
+                        "caption":"title",
+                        "_region":2
+                    },
+                    {
+                        "id":"memo",
+                        "type":"textarea",
+                        "width":"16em",
+                        "maxlength":500,
+                        "_cells":{ },
+                        "_serialId":"-h_k",
+                        "_colWidth":"16em",
+                        "_cellWidth":"16em",
+                        "_hcellheight":"1.8333333333333333em",
+                        "caption":"memo",
+                        "_region":2
+                    }
+                ])
+            );
+            
+            append(
+                xui.create("xui.UI.Label")
+                .setHost(host,"xui_ui_label3")
+                .setLeft("7.5em")
+                .setTop("2.5em")
+                .setWidth("28.916666666666668em")
+                .setCaption("Useless, except for build table/object schema json")
+            );
+            
             return children;
             // ]]Code created by CrossUI RAD Studio
         },
