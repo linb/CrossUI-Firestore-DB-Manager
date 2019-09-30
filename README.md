@@ -1,4 +1,4 @@
-## CrossUI-Firestore-DB-Manager
+## CrossUI-Firestore-DB-Manager (Serverless App)
 
 [Online DB manager for Goolge Firestore.]( https://linb.github.io/CrossUI-Firestore-DB-Manager)
 
