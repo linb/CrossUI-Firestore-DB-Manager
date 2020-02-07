@@ -35,26 +35,14 @@ xui.Class('App.SchemaUtil', 'xui.Module',{
                         "caption":"First Name",
                         "required":true,
                         "type":"input",
-                        "width":"8em",
-                        "_cells":{ },
-                        "_serialId":"-h_g",
-                        "_colWidth":"8em",
-                        "_cellWidth":"8em",
-                        "_hcellheight":"1.8333333333333333em",
-                        "_region":2
+                        "width":"8em"
                     },
                     {
                         "id":"lname",
                         "caption":"Last Name",
                         "required":true,
                         "type":"input",
-                        "width":"8em",
-                        "_cells":{ },
-                        "_serialId":"-h_h",
-                        "_colWidth":"8em",
-                        "_cellWidth":"8em",
-                        "_hcellheight":"1.8333333333333333em",
-                        "_region":2
+                        "width":"8em"
                     },
                     {
                         "id":"age",
@@ -65,39 +53,21 @@ xui.Class('App.SchemaUtil', 'xui.Module',{
                         "precision":0,
                         "increment":10,
                         "min":0,
-                        "max":200,
-                        "_cells":{ },
-                        "_serialId":"-h_i",
-                        "_colWidth":"8em",
-                        "_cellWidth":"8em",
-                        "_hcellheight":"1.8333333333333333em",
-                        "_region":2
+                        "max":200
                     },
                     {
                         "id":"title",
                         "type":"input",
                         "width":"12em",
                         "maxlength":156,
-                        "_cells":{ },
-                        "_serialId":"-h_j",
-                        "_colWidth":"12em",
-                        "_cellWidth":"12em",
-                        "_hcellheight":"1.8333333333333333em",
-                        "caption":"title",
-                        "_region":2
+                        "caption":"title"
                     },
                     {
                         "id":"memo",
                         "type":"textarea",
                         "width":"16em",
                         "maxlength":500,
-                        "_cells":{ },
-                        "_serialId":"-h_k",
-                        "_colWidth":"16em",
-                        "_cellWidth":"16em",
-                        "_hcellheight":"1.8333333333333333em",
-                        "caption":"memo",
-                        "_region":2
+                        "caption":"memo"
                     }
                 ])
             );
